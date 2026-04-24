@@ -12,11 +12,13 @@ $SUDO apt-get update
 # install java and base tools
 $SUDO apt-get install -y default-jre-headless default-jdk-headless python3-pip bc curl wget pkg-config libfontconfig1-dev libfreetype6-dev
 
-# install julia version pinned in Manifest.toml
-JULIA_VERSION="$(awk -F '"' '/^julia_version = /{print $2; exit}' Manifest.toml)"
+# install julia version pinned by CI (fallback to Manifest if present)
+JULIA_VERSION="${CI_JULIA_VERSION:-}"
+if [[ -z "$JULIA_VERSION" && -f Manifest.toml ]]; then
+  JULIA_VERSION="$(awk -F '"' '/^julia_version = /{print $2; exit}' Manifest.toml)"
+fi
 if [[ -z "$JULIA_VERSION" ]]; then
-  echo "Could not read julia_version from Manifest.toml" >&2
-  exit 1
+  JULIA_VERSION="1.11.5"
 fi
 JULIA_SERIES="$(echo "$JULIA_VERSION" | cut -d. -f1,2)"
 
