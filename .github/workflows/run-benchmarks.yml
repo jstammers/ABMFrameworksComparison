@@ -19,12 +19,25 @@ jobs:
       - name: setup-benchmarks
         run: bash ./.github/setup.sh
         shell: bash
-      - name: run-benchmark-flocking
-        run: bash ./.github/run-flocking.sh
+
+      - name: run-benchmarks-in-parallel
+        run: |
+          RESULT_FILE=benchmark_results_flocking.txt SKIP_TABLE=1 bash ./.github/run-flocking.sh &
+          PID_FLOCKING=$!
+          RESULT_FILE=benchmark_results_wolfsheep.txt SKIP_TABLE=1 bash ./.github/run-wolfsheep.sh &
+          PID_WOLFSHEEP=$!
+          RESULT_FILE=benchmark_results_schelling.txt SKIP_TABLE=1 bash ./.github/run-schelling.sh &
+          PID_SCHELLING=$!
+
+          wait $PID_FLOCKING
+          wait $PID_WOLFSHEEP
+          wait $PID_SCHELLING
         shell: bash
-      - name: run-benchmark-wolfsheep
-        run: bash ./.github/run-wolfsheep.sh
+
+      - name: merge-benchmark-results
+        run: cat benchmark_results_wolfsheep.txt benchmark_results_flocking.txt benchmark_results_schelling.txt > benchmark_results.txt
         shell: bash
-      - name: run-benchmark-schelling
-        run: bash ./.github/run-schelling.sh
+
+      - name: update-benchmark-table
+        run: julia --project=@. create_benchmark_table.jl
         shell: bash
