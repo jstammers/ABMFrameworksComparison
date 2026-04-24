@@ -47,13 +47,20 @@ impl Agent for Sheep {
         let y = self.loc.y;
         let mut rng = rand::rng();
 
-        let xmin = if x > 0 { -1 } else { 0 };
-        let xmax = i32::from(x < state.dim.0 - 1);
-        let ymin = if y > 0 { -1 } else { 0 };
-        let ymax = i32::from(y < state.dim.1 - 1);
-
-        let nx = rng.random_range(xmin..=xmax);
-        let ny = rng.random_range(ymin..=ymax);
+        let mut moves = Vec::new();
+        for dx in -1..=1 {
+            for dy in -1..=1 {
+                if dx == 0 && dy == 0 {
+                    continue;
+                }
+                let nx = x + dx;
+                let ny = y + dy;
+                if nx >= 0 && nx < state.dim.0 && ny >= 0 && ny < state.dim.1 {
+                    moves.push((dx, dy));
+                }
+            }
+        }
+        let (nx, ny) = moves[rng.random_range(0..moves.len())];
         self.loc = Int2D {
             x: x + nx,
             y: y + ny,
