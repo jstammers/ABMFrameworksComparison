@@ -9,7 +9,7 @@ sudo chmod a+rwx ./
 sudo chmod -R 777 ./
 
 # install java and base tools
-sudo apt-get install -y default-jre-headless default-jdk-headless python3-pip bc curl
+sudo apt-get install -y default-jre-headless default-jdk-headless python3-pip bc curl pkg-config libfontconfig1-dev libfreetype6-dev
 
 # install julia
 sudo wget -q https://julialang-s3.julialang.org/bin/linux/x64/1.11/julia-1.11.5-linux-x86_64.tar.gz
