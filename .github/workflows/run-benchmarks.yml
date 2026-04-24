@@ -10,7 +10,7 @@ on:
     tags: '*'
 
 jobs:
-  Run-benchmark-flocking:
+  Run-benchmarks:
     runs-on: ubuntu-latest
     steps:
       - name: Cancel ongoing test runs for previous commits
@@ -19,32 +19,12 @@ jobs:
       - name: setup-benchmarks
         run: bash ./.github/setup.sh
         shell: bash
-      - name: run-benchmarks
+      - name: run-benchmark-flocking
         run: bash ./.github/run-flocking.sh
         shell: bash
-
-  Run-benchmark-wolfsheep:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Cancel ongoing test runs for previous commits
-        uses: styfle/cancel-workflow-action@0.11.0
-      - uses: actions/checkout@v3
-      - name: setup-benchmarks
-        run: bash ./.github/setup.sh
-        shell: bash
-      - name: run-benchmarks
+      - name: run-benchmark-wolfsheep
         run: bash ./.github/run-wolfsheep.sh
         shell: bash
-
-  Run-benchmark-schelling:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Cancel ongoing test runs for previous commits
-        uses: styfle/cancel-workflow-action@0.11.0
-      - uses: actions/checkout@v3
-      - name: setup-benchmarks
-        run: bash ./.github/setup.sh
-        shell: bash
-      - name: run-benchmarks
+      - name: run-benchmark-schelling
         run: bash ./.github/run-schelling.sh
         shell: bash
