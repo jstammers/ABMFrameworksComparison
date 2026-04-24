@@ -22,6 +22,11 @@ python3 WolfSheep/Mesa/benchmark_wolfsheep.py
 python3 Flocking/Mesa/benchmark_flocking.py
 python3 Schelling/Mesa/benchmark_schelling.py
 
+echo "Benchmarking KrABMaga"
+bash WolfSheep/KrABMaga/benchmark_wolfsheep.sh
+bash Flocking/KrABMaga/benchmark_flocking.sh
+bash Schelling/KrABMaga/benchmark_schelling.sh
+
 echo "Benchmarking NetLogo"
 bash WolfSheep/NetLogo/benchmark_wolfsheep.sh
 bash Flocking/NetLogo/benchmark_flocking.sh

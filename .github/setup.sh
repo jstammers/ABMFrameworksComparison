@@ -29,3 +29,7 @@ sudo mv "NetLogo-6.4.0-64" netlogo
 
 # install bc tool
 sudo apt install bc
+
+# install rust toolchain
+curl https://sh.rustup.rs -sSf | sh -s -- -y
+source "$HOME/.cargo/env"

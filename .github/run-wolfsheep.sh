@@ -14,6 +14,9 @@ bash ./WolfSheep/Mason/benchmark_wolfsheep.sh
 echo "Benchmarking Mesa"
 python3 ./WolfSheep/Mesa/benchmark_wolfsheep.py
 
+echo "Benchmarking KrABMaga"
+bash ./WolfSheep/KrABMaga/benchmark_wolfsheep.sh
+
 echo "Benchmarking NetLogo"
 bash ./WolfSheep/NetLogo/benchmark_wolfsheep.sh
 

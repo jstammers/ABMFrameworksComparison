@@ -14,6 +14,9 @@ bash ./Schelling/Mason/benchmark_schelling.sh
 echo "Benchmarking Mesa"
 python3 ./Schelling/Mesa/benchmark_schelling.py
 
+echo "Benchmarking KrABMaga"
+bash ./Schelling/KrABMaga/benchmark_schelling.sh
+
 echo "Benchmarking NetLogo"
 bash Schelling/NetLogo/benchmark_schelling.sh
 
