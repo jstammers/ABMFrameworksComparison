@@ -1,29 +1,46 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# fetch update software list
-sudo apt-get update
+SUDO=""
+if command -v sudo >/dev/null 2>&1; then
+  SUDO="sudo"
+fi
 
-# give permissions
-sudo chmod a+rwx ./
-sudo chmod -R 777 ./
+# fetch update software list
+$SUDO apt-get update
 
 # install java and base tools
-sudo apt-get install -y default-jre-headless default-jdk-headless python3-pip bc curl pkg-config libfontconfig1-dev libfreetype6-dev
+$SUDO apt-get install -y default-jre-headless default-jdk-headless python3-pip bc curl wget pkg-config libfontconfig1-dev libfreetype6-dev
 
-# install julia
-sudo wget -q https://julialang-s3.julialang.org/bin/linux/x64/1.11/julia-1.11.5-linux-x86_64.tar.gz
-sudo tar zxf julia-1.11.5-linux-x86_64.tar.gz
+# install julia (host-arch aware for local container debugging)
+ARCH="$(uname -m)"
+if [[ "$ARCH" == "x86_64" || "$ARCH" == "amd64" ]]; then
+  JULIA_TARBALL="julia-1.11.5-linux-x86_64.tar.gz"
+  JULIA_URL="https://julialang-s3.julialang.org/bin/linux/x64/1.11/$JULIA_TARBALL"
+elif [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]]; then
+  JULIA_TARBALL="julia-1.11.5-linux-aarch64.tar.gz"
+  JULIA_URL="https://julialang-s3.julialang.org/bin/linux/aarch64/1.11/$JULIA_TARBALL"
+else
+  echo "Unsupported architecture for Julia install: $ARCH" >&2
+  exit 1
+fi
+
+$SUDO wget -q "$JULIA_URL"
+$SUDO tar zxf "$JULIA_TARBALL"
 JULIA_BIN="$(pwd)/julia-1.11.5/bin"
 export PATH="$PATH:$JULIA_BIN"
-echo "$JULIA_BIN" >> "$GITHUB_PATH"
+if [[ -n "${GITHUB_PATH:-}" ]]; then
+  echo "$JULIA_BIN" >> "$GITHUB_PATH"
+fi
 
 # install agents
 julia --project=@. -e 'using Pkg; Pkg.instantiate()'
 
 # install python deps in isolated venv
 python3 -m venv .venv
-echo "$(pwd)/.venv/bin" >> "$GITHUB_PATH"
+if [[ -n "${GITHUB_PATH:-}" ]]; then
+  echo "$(pwd)/.venv/bin" >> "$GITHUB_PATH"
+fi
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install mesa==3.2.0
@@ -31,11 +48,13 @@ python -m pip install "git+https://github.com/mesa/mesa-frames.git"
 python -m pip install beartype
 
 # install netlogo
-sudo wget https://downloads.netlogo.org/6.4.0/NetLogo-6.4.0-64.tgz
-sudo tar -xzf NetLogo-6.4.0-64.tgz
-sudo mv "NetLogo-6.4.0-64" netlogo
+$SUDO wget https://downloads.netlogo.org/6.4.0/NetLogo-6.4.0-64.tgz
+$SUDO tar -xzf NetLogo-6.4.0-64.tgz
+$SUDO mv "NetLogo-6.4.0-64" netlogo
 
 # install rust toolchain
 curl https://sh.rustup.rs -sSf | sh -s -- -y
 source "$HOME/.cargo/env"
-echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+if [[ -n "${GITHUB_PATH:-}" ]]; then
+  echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+fi
