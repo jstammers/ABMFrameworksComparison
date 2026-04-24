@@ -12,22 +12,32 @@ $SUDO apt-get update
 # install java and base tools
 $SUDO apt-get install -y default-jre-headless default-jdk-headless python3-pip bc curl wget pkg-config libfontconfig1-dev libfreetype6-dev
 
-# install julia (host-arch aware for local container debugging)
+# install julia version pinned in Manifest.toml
+JULIA_VERSION="$(awk -F '"' '/^julia_version = /{print $2; exit}' Manifest.toml)"
+if [[ -z "$JULIA_VERSION" ]]; then
+  echo "Could not read julia_version from Manifest.toml" >&2
+  exit 1
+fi
+JULIA_SERIES="$(echo "$JULIA_VERSION" | cut -d. -f1,2)"
+
 ARCH="$(uname -m)"
 if [[ "$ARCH" == "x86_64" || "$ARCH" == "amd64" ]]; then
-  JULIA_TARBALL="julia-1.10.10-linux-x86_64.tar.gz"
-  JULIA_URL="https://julialang-s3.julialang.org/bin/linux/x64/1.10/$JULIA_TARBALL"
+  JULIA_ARCH_PATH="x64"
+  JULIA_ARCH_FILE="x86_64"
 elif [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]]; then
-  JULIA_TARBALL="julia-1.10.10-linux-aarch64.tar.gz"
-  JULIA_URL="https://julialang-s3.julialang.org/bin/linux/aarch64/1.10/$JULIA_TARBALL"
+  JULIA_ARCH_PATH="aarch64"
+  JULIA_ARCH_FILE="aarch64"
 else
   echo "Unsupported architecture for Julia install: $ARCH" >&2
   exit 1
 fi
 
+JULIA_TARBALL="julia-${JULIA_VERSION}-linux-${JULIA_ARCH_FILE}.tar.gz"
+JULIA_URL="https://julialang-s3.julialang.org/bin/linux/${JULIA_ARCH_PATH}/${JULIA_SERIES}/${JULIA_TARBALL}"
+
 $SUDO wget -q "$JULIA_URL"
 $SUDO tar zxf "$JULIA_TARBALL"
-JULIA_BIN="$(pwd)/julia-1.10.10/bin"
+JULIA_BIN="$(pwd)/julia-${JULIA_VERSION}/bin"
 export PATH="$PATH:$JULIA_BIN"
 if [[ -n "${GITHUB_PATH:-}" ]]; then
   echo "$JULIA_BIN" >> "$GITHUB_PATH"
@@ -35,7 +45,6 @@ fi
 
 # install agents
 julia --project=@. -e 'using Pkg; Pkg.instantiate()'
-# TODO: refresh Project/Manifest to restore compatibility with Julia 1.11+ and then bump CI Julia.
 
 # install python deps in isolated venv
 python3 -m venv .venv
