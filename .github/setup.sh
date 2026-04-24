@@ -15,11 +15,11 @@ $SUDO apt-get install -y default-jre-headless default-jdk-headless python3-pip b
 # install julia (host-arch aware for local container debugging)
 ARCH="$(uname -m)"
 if [[ "$ARCH" == "x86_64" || "$ARCH" == "amd64" ]]; then
-  JULIA_TARBALL="julia-1.11.5-linux-x86_64.tar.gz"
-  JULIA_URL="https://julialang-s3.julialang.org/bin/linux/x64/1.11/$JULIA_TARBALL"
+  JULIA_TARBALL="julia-1.10.10-linux-x86_64.tar.gz"
+  JULIA_URL="https://julialang-s3.julialang.org/bin/linux/x64/1.10/$JULIA_TARBALL"
 elif [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]]; then
-  JULIA_TARBALL="julia-1.11.5-linux-aarch64.tar.gz"
-  JULIA_URL="https://julialang-s3.julialang.org/bin/linux/aarch64/1.11/$JULIA_TARBALL"
+  JULIA_TARBALL="julia-1.10.10-linux-aarch64.tar.gz"
+  JULIA_URL="https://julialang-s3.julialang.org/bin/linux/aarch64/1.10/$JULIA_TARBALL"
 else
   echo "Unsupported architecture for Julia install: $ARCH" >&2
   exit 1
@@ -27,7 +27,7 @@ fi
 
 $SUDO wget -q "$JULIA_URL"
 $SUDO tar zxf "$JULIA_TARBALL"
-JULIA_BIN="$(pwd)/julia-1.11.5/bin"
+JULIA_BIN="$(pwd)/julia-1.10.10/bin"
 export PATH="$PATH:$JULIA_BIN"
 if [[ -n "${GITHUB_PATH:-}" ]]; then
   echo "$JULIA_BIN" >> "$GITHUB_PATH"
@@ -35,6 +35,7 @@ fi
 
 # install agents
 julia --project=@. -e 'using Pkg; Pkg.instantiate()'
+# TODO: refresh Project/Manifest to restore compatibility with Julia 1.11+ and then bump CI Julia.
 
 # install python deps in isolated venv
 python3 -m venv .venv
