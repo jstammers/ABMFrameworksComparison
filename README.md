@@ -24,6 +24,12 @@ These are the results of the latest comparison:
 | Schelling-large (Time-Ratio)  |       1.0        |     **0.59**     |    1.51    |     14.33     |   26.66    |      .       |       .         |
 |    Schelling (Lines of Code)      |       **26**          | 78 |    129   |   54 (739)      |     33    |
 
+### Notes on new integrations
+
+- `Mesa-Frames` implementations are vectorized where possible, but still constrained by each model declaration (e.g. random sequential activation in Flocking and Schelling).
+- `KrABMaga` Flocking follows the declared rule structure, but the framework's continuous-space `Real2D` type is `f32` in `krabmaga 0.6.1`, so strict 64-bit position/velocity semantics are not available in that backend.
+- `KrABMaga` seed CLI arguments are parsed for consistency across scripts; however, not all simulation entrypoints in this version of the framework expose explicit seed wiring in the same way.
+
 ## How it works
 
 Various agent based models have been selected to compare performance, such as the Schelling model for example. This repository is structured as follows
