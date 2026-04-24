@@ -5,8 +5,9 @@ use krabmaga::engine::fields::field_2d::Field2D;
 use krabmaga::engine::location::Real2D;
 use krabmaga::engine::schedule::Schedule;
 use krabmaga::engine::state::State;
-use krabmaga::rand;
+use krabmaga::rand::rngs::StdRng;
 use krabmaga::rand::Rng;
+use krabmaga::rand::SeedableRng;
 use std::any::Any;
 
 pub struct Flocker {
@@ -14,15 +15,19 @@ pub struct Flocker {
     pub field1: Field2D<Bird>,
     pub initial_flockers: u32,
     pub dim: (f32, f32),
+    pub visual_distance: f32,
+    pub rng: StdRng,
 }
 
 impl Flocker {
-    pub fn new(dim: (f32, f32), initial_flockers: u32) -> Self {
+    pub fn new(dim: (f32, f32), initial_flockers: u32, visual_distance: f32, seed: u64) -> Self {
         Flocker {
             step: 0,
             field1: Field2D::new(dim.0, dim.1, DISCRETIZATION, TOROIDAL),
             initial_flockers,
             dim,
+            visual_distance,
+            rng: StdRng::seed_from_u64(seed),
         }
     }
 }
@@ -34,10 +39,9 @@ impl State for Flocker {
     }
 
     fn init(&mut self, schedule: &mut Schedule) {
-        let mut rng = rand::rng();
         for bird_id in 0..self.initial_flockers {
-            let r1: f32 = rng.random();
-            let r2: f32 = rng.random();
+            let r1: f32 = self.rng.random();
+            let r2: f32 = self.rng.random();
             let last_d = Real2D { x: 0.0, y: 0.0 };
             let loc = Real2D {
                 x: self.dim.0 * r1,

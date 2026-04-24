@@ -154,7 +154,7 @@ fn generate_grass(state: &mut WsgState) {
                     .grass_field
                     .set_value_location(state.grass_regrowth_time, &Int2D { x, y });
             } else {
-                let grass_init_value = rng.random_range(0..state.grass_regrowth_time + 1);
+                let grass_init_value = rng.random_range(1..state.grass_regrowth_time + 1);
                 state
                     .grass_field
                     .set_value_location(grass_init_value, &Int2D { x, y });
@@ -171,7 +171,8 @@ fn generate_sheep(state: &mut WsgState, schedule: &mut Schedule) {
             x: rng.random_range(0..state.dim.0),
             y: rng.random_range(0..state.dim.1),
         };
-        let init_energy = rng.random_range(0..(2.0 * state.sheep_gain_from_food) as usize) as f64;
+        let init_energy =
+            rng.random_range(1..(2.0 * state.sheep_gain_from_food) as usize + 1) as f64;
         let sheep = Sheep::new(
             id + state.initial_animals.1,
             loc,
@@ -191,7 +192,8 @@ fn generate_wolves(state: &mut WsgState, schedule: &mut Schedule) {
             x: rng.random_range(0..state.dim.0),
             y: rng.random_range(0..state.dim.1),
         };
-        let init_energy = rng.random_range(0..(2.0 * state.wolf_gain_from_food) as usize) as f64;
+        let init_energy =
+            rng.random_range(1..(2.0 * state.wolf_gain_from_food) as usize + 1) as f64;
         let wolf = Wolf::new(
             id,
             loc,

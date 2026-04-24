@@ -37,8 +37,14 @@ fn parse_args() -> (i32, i32, u32, u32, i32, u64, usize) {
 }
 
 fn main() {
-    let (width, height, num_agents, min_to_be_happy, radius, steps, _seed) = parse_args();
-    let world = World::new((width, height), num_agents, min_to_be_happy, radius);
+    let (width, height, num_agents, min_to_be_happy, radius, steps, seed) = parse_args();
+    let world = World::new(
+        (width, height),
+        num_agents,
+        min_to_be_happy,
+        radius,
+        seed as u64,
+    );
 
     let start = Instant::now();
     simulate!(world, steps, 1, false);

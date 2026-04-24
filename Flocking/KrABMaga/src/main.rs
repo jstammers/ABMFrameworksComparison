@@ -8,12 +8,11 @@ use crate::model::state::Flocker;
 mod model;
 
 pub static COHESION: f32 = 0.03;
-pub static AVOIDANCE: f32 = 0.015;
-pub static RANDOMNESS: f32 = 0.0;
-pub static CONSISTENCY: f32 = 0.05;
-pub static MOMENTUM: f32 = 1.0;
+pub static SEPARATE: f32 = 0.015;
+pub static MATCH: f32 = 0.05;
 pub static JUMP: f32 = 1.0;
-pub static DISCRETIZATION: f32 = 5.0 / 1.5;
+pub static SEPARATION: f32 = 1.0;
+pub static DISCRETIZATION: f32 = 4.0;
 pub static TOROIDAL: bool = true;
 
 fn parse_args() -> (u32, f32, f32, u64, usize) {
@@ -36,8 +35,9 @@ fn parse_args() -> (u32, f32, f32, u64, usize) {
 }
 
 fn main() {
-    let (population, width, height, steps, _seed) = parse_args();
-    let state = Flocker::new((width, height), population);
+    let (population, width, height, steps, seed) = parse_args();
+    let vision = if population <= 200 { 5.0 } else { 15.0 };
+    let state = Flocker::new((width, height), population, vision, seed as u64);
 
     let start = Instant::now();
     let _ = simulate!(state, steps, 1, false);

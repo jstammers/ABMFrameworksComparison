@@ -1,12 +1,10 @@
 use crate::model::state::Flocker;
-use crate::{AVOIDANCE, COHESION, CONSISTENCY, JUMP, MOMENTUM, RANDOMNESS};
+use crate::{COHESION, JUMP, MATCH, SEPARATE, SEPARATION};
 use core::fmt;
 use krabmaga::engine::agent::Agent;
 use krabmaga::engine::fields::field_2d::{toroidal_distance, toroidal_transform, Location2D};
 use krabmaga::engine::location::Real2D;
 use krabmaga::engine::state::State;
-use krabmaga::rand;
-use krabmaga::rand::Rng;
 use std::hash::{Hash, Hasher};
 
 #[derive(Clone, Copy)]
@@ -24,99 +22,61 @@ impl Bird {
 
 impl Agent for Bird {
     fn step(&mut self, state: &mut dyn State) {
-        let state = state.as_any().downcast_ref::<Flocker>().unwrap();
-        let vec = state
+        let state = state.as_any_mut().downcast_mut::<Flocker>().unwrap();
+        let neighbors = state
             .field1
-            .get_neighbors_within_relax_distance(self.loc, 10.0);
+            .get_neighbors_within_relax_distance(self.loc, state.visual_distance);
 
         let width = state.dim.0;
         let height = state.dim.1;
 
-        let mut avoidance = Real2D { x: 0.0, y: 0.0 };
-        let mut cohesion = Real2D { x: 0.0, y: 0.0 };
-        let mut randomness = Real2D { x: 0.0, y: 0.0 };
-        let mut consistency = Real2D { x: 0.0, y: 0.0 };
+        let mut count = 0;
+        let mut cohere = Real2D { x: 0.0, y: 0.0 };
+        let mut separate = Real2D { x: 0.0, y: 0.0 };
+        let mut m = Real2D { x: 0.0, y: 0.0 };
 
-        if !vec.is_empty() {
-            let mut x_avoid = 0.0;
-            let mut y_avoid = 0.0;
-            let mut x_cohe = 0.0;
-            let mut y_cohe = 0.0;
-            let mut x_cons = 0.0;
-            let mut y_cons = 0.0;
-            let mut count = 0;
-
-            for elem in &vec {
-                if self.id != elem.id {
-                    let dx = toroidal_distance(self.loc.x, elem.loc.x, width);
-                    let dy = toroidal_distance(self.loc.y, elem.loc.y, height);
-                    count += 1;
-
-                    let square = dx * dx + dy * dy;
-                    x_avoid += dx / (square * square + 1.0);
-                    y_avoid += dy / (square * square + 1.0);
-
-                    x_cohe += dx;
-                    y_cohe += dy;
-
-                    x_cons += elem.last_d.x;
-                    y_cons += elem.last_d.y;
-                }
+        for elem in &neighbors {
+            if self.id == elem.id {
+                continue;
             }
 
-            if count > 0 {
-                x_avoid /= count as f32;
-                y_avoid /= count as f32;
-                x_cohe /= count as f32;
-                y_cohe /= count as f32;
-                x_cons /= count as f32;
-                y_cons /= count as f32;
-
-                consistency = Real2D {
-                    x: x_cons / count as f32,
-                    y: y_cons / count as f32,
-                };
-            } else {
-                consistency = Real2D {
-                    x: x_cons,
-                    y: y_cons,
+            count += 1;
+            let heading = Real2D {
+                x: toroidal_distance(self.loc.x, elem.loc.x, width),
+                y: toroidal_distance(self.loc.y, elem.loc.y, height),
+            };
+            cohere = Real2D {
+                x: cohere.x + heading.x,
+                y: cohere.y + heading.y,
+            };
+            if heading.x * heading.x + heading.y * heading.y < SEPARATION * SEPARATION {
+                separate = Real2D {
+                    x: separate.x - heading.x,
+                    y: separate.y - heading.y,
                 };
             }
-
-            avoidance = Real2D {
-                x: 400.0 * x_avoid,
-                y: 400.0 * y_avoid,
-            };
-
-            cohesion = Real2D {
-                x: -x_cohe / 10.0,
-                y: -y_cohe / 10.0,
-            };
-
-            let mut rng = rand::rng();
-            let r1: f32 = rng.random();
-            let x_rand = r1 * 2.0 - 1.0;
-            let r2: f32 = rng.random();
-            let y_rand = r2 * 2.0 - 1.0;
-
-            let square = (x_rand * x_rand + y_rand * y_rand).sqrt();
-            randomness = Real2D {
-                x: 0.05 * x_rand / square,
-                y: 0.05 * y_rand / square,
+            m = Real2D {
+                x: m.x + elem.last_d.x,
+                y: m.y + elem.last_d.y,
             };
         }
 
-        let mom = self.last_d;
-        let mut dx = COHESION * cohesion.x
-            + AVOIDANCE * avoidance.x
-            + CONSISTENCY * consistency.x
-            + RANDOMNESS * randomness.x
-            + MOMENTUM * mom.x;
-        let mut dy = COHESION * cohesion.y
-            + AVOIDANCE * avoidance.y
-            + CONSISTENCY * consistency.y
-            + RANDOMNESS * randomness.y
-            + MOMENTUM * mom.y;
+        let n = (count.max(1)) as f32;
+        cohere = Real2D {
+            x: (cohere.x / n) * COHESION,
+            y: (cohere.y / n) * COHESION,
+        };
+        separate = Real2D {
+            x: (separate.x / n) * SEPARATE,
+            y: (separate.y / n) * SEPARATE,
+        };
+        m = Real2D {
+            x: (m.x / n) * MATCH,
+            y: (m.y / n) * MATCH,
+        };
+
+        let mut dx = (self.last_d.x + cohere.x + separate.x + m.x) / 2.0;
+        let mut dy = (self.last_d.y + cohere.y + separate.y + m.y) / 2.0;
 
         let dis = (dx * dx + dy * dy).sqrt();
         if dis > 0.0 {
@@ -130,7 +90,6 @@ impl Agent for Bird {
         let loc_y = toroidal_transform(self.loc.y + dy, height);
 
         self.loc = Real2D { x: loc_x, y: loc_y };
-        drop(vec);
         state
             .field1
             .set_object_location(*self, Real2D { x: loc_x, y: loc_y });

@@ -25,7 +25,7 @@ fn parse_args() -> (i32, i32, u32, u32, f64, f64, u16, u64, usize) {
     let wolf_reproduce = args[6].parse::<f64>().expect("invalid wolf_reproduce");
     let regrowth_time = args[7].parse::<u16>().expect("invalid regrowth_time");
     let steps = args[8].parse::<u64>().expect("invalid steps");
-    let seed = args[9].parse::<usize>().expect("invalid seed");
+    let _seed = args[9].parse::<usize>().expect("invalid seed");
 
     (
         width,
@@ -36,7 +36,7 @@ fn parse_args() -> (i32, i32, u32, u32, f64, f64, u16, u64, usize) {
         wolf_reproduce,
         regrowth_time,
         steps,
-        seed,
+        _seed,
     )
 }
 
