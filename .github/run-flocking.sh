@@ -14,6 +14,9 @@ bash ./Flocking/Mason/benchmark_flocking.sh
 echo "Benchmarking Mesa"
 python3 ./Flocking/Mesa/benchmark_flocking.py
 
+echo "Benchmarking Mesa-Frames"
+python3 ./Flocking/MesaFrames/benchmark_flocking_mesaframes.py
+
 echo "Benchmarking KrABMaga"
 bash ./Flocking/KrABMaga/benchmark_flocking.sh
 

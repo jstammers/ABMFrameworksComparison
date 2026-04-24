@@ -22,6 +22,11 @@ python3 WolfSheep/Mesa/benchmark_wolfsheep.py
 python3 Flocking/Mesa/benchmark_flocking.py
 python3 Schelling/Mesa/benchmark_schelling.py
 
+echo "Benchmarking Mesa-Frames"
+python3 WolfSheep/MesaFrames/benchmark_wolfsheep_mesaframes.py
+python3 Flocking/MesaFrames/benchmark_flocking_mesaframes.py
+python3 Schelling/MesaFrames/benchmark_schelling_mesaframes.py
+
 echo "Benchmarking KrABMaga"
 bash WolfSheep/KrABMaga/benchmark_wolfsheep.sh
 bash Flocking/KrABMaga/benchmark_flocking.sh

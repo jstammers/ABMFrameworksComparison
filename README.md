@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8016506.svg)](https://doi.org/10.5281/zenodo.8016506)
 
-This repository contains code used to compare performance and features between various agent based modelling **(ABM)** frameworks. Currently, frameworks compared are [Agents.jl](https://github.com/JuliaDynamics/Agents.jl), [Ark.jl](https://github.com/ark-ecs/Ark.jl), [NetLogo](https://github.com/NetLogo/NetLogo), [MASON](https://github.com/eclab/mason), [Mesa](https://github.com/projectmesa/mesa), and [krABMaga](https://github.com/krABMaga/krABMaga). We happily welcome more frameworks to join the comparison.
+This repository contains code used to compare performance and features between various agent based modelling **(ABM)** frameworks. Currently, frameworks compared are [Agents.jl](https://github.com/JuliaDynamics/Agents.jl), [Ark.jl](https://github.com/ark-ecs/Ark.jl), [NetLogo](https://github.com/NetLogo/NetLogo), [MASON](https://github.com/eclab/mason), [Mesa](https://github.com/projectmesa/mesa), [Mesa-Frames](https://github.com/mesa/mesa-frames), and [krABMaga](https://github.com/krABMaga/krABMaga). We happily welcome more frameworks to join the comparison.
 
 **The performance benchmark comparison is run automatically during continuous integration, and hence the comparison is updated after every pull request to this repo.**
 
@@ -12,16 +12,16 @@ This repository has been initiated and maintained by the developers of Agents.jl
 
 These are the results of the latest comparison:
 
-| Model/Framework  | Agents.jl 6.2.10 | Ark.jl 0.4.0 | MASON 22.0 | Netlogo 6.4.0 | Mesa 3.2.0 | KrABMaga 0.6.1 |
-|:------------------:|:------------------:|:--------------:|:------------:|:---------------:|:------------:|:---------------:|
-| WolfSheep-small (Time-Ratio)  |       1.0        |     **0.34**     |    5.29    |     9.94      |    9.38    |       .         |
-| WolfSheep-large (Time-Ratio)  |       1.0        |     **0.14**     |    7.8     |     4.81      |    3.28    |       .         |
+| Model/Framework  | Agents.jl 6.2.10 | Ark.jl 0.4.0 | MASON 22.0 | Netlogo 6.4.0 | Mesa 3.2.0 | Mesa-Frames | KrABMaga 0.6.1 |
+|:------------------:|:------------------:|:--------------:|:------------:|:---------------:|:------------:|:------------:|:---------------:|
+| WolfSheep-small (Time-Ratio)  |       1.0        |     **0.34**     |    5.29    |     9.94      |    9.38    |      .       |       .         |
+| WolfSheep-large (Time-Ratio)  |       1.0        |     **0.14**     |    7.8     |     4.81      |    3.28    |      .       |       .         |
 | WolfSheep (Lines of Code) |     **73**          |   149 | 202        |  137 (871)        | 118 |
-|  Flocking-small (Time-Ratio)  |       1.0        |      **0.73**       |    1.42    |     15.37     |   159.29   |       .         |
-|  Flocking-large (Time-Ratio)  |       1.0        |     **0.36**     |    0.61    |     19.14     |    59.5    |       .         |
+|  Flocking-small (Time-Ratio)  |       1.0        |      **0.73**       |    1.42    |     15.37     |   159.29   |      .       |       .         |
+|  Flocking-large (Time-Ratio)  |       1.0        |     **0.36**     |    0.61    |     19.14     |    59.5    |      .       |       .         |
 |   Flocking (Lines of Code)       |       **42**     |   137  | 159     |    82 (689)   |   94       |
-| Schelling-small (Time-Ratio)  |       1.0        |     **0.61**     |    1.19     |     11.39      |    29.73    |       .         |
-| Schelling-large (Time-Ratio)  |       1.0        |     **0.59**     |    1.51    |     14.33     |   26.66    |       .         |
+| Schelling-small (Time-Ratio)  |       1.0        |     **0.61**     |    1.19     |     11.39      |    29.73    |      .       |       .         |
+| Schelling-large (Time-Ratio)  |       1.0        |     **0.59**     |    1.51    |     14.33     |   26.66    |      .       |       .         |
 |    Schelling (Lines of Code)      |       **26**          | 78 |    129   |   54 (739)      |     33    |
 
 ## How it works
