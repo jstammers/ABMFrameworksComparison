@@ -1,8 +1,5 @@
 #!/bin/bash
 
-RESULT_FILE="${RESULT_FILE:-benchmark_results.txt}"
-SKIP_TABLE="${SKIP_TABLE:-0}"
-
 (
 
 echo "Benchmarking Agents.jl"
@@ -26,8 +23,6 @@ bash ./WolfSheep/KrABMaga/benchmark_wolfsheep.sh
 echo "Benchmarking NetLogo"
 bash ./WolfSheep/NetLogo/benchmark_wolfsheep.sh
 
-) | tee "$RESULT_FILE"
+) | tee benchmark_results.txt
 
-if [[ "$SKIP_TABLE" != "1" ]]; then
-  julia --project=@. create_benchmark_table.jl
-fi
+julia --project=@. create_benchmark_table.jl
