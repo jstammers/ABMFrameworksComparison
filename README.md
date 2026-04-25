@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8016506.svg)](https://doi.org/10.5281/zenodo.8016506)
 
-This repository contains code used to compare performance and features between various agent based modelling **(ABM)** frameworks. Currently, frameworks compared are [Agents.jl](https://github.com/JuliaDynamics/Agents.jl), [Ark.jl](https://github.com/ark-ecs/Ark.jl), [NetLogo](https://github.com/NetLogo/NetLogo), [MASON](https://github.com/eclab/mason) and [Mesa](https://github.com/projectmesa/mesa). We happily welcome more frameworks to join the comparison.
+This repository contains code used to compare performance and features between various agent based modelling **(ABM)** frameworks. Currently, frameworks compared are [Agents.jl](https://github.com/JuliaDynamics/Agents.jl), [Ark.jl](https://github.com/ark-ecs/Ark.jl), [NetLogo](https://github.com/NetLogo/NetLogo), [MASON](https://github.com/eclab/mason), [Mesa](https://github.com/projectmesa/mesa), [Mesa-Frames](https://github.com/mesa/mesa-frames), and [krABMaga](https://github.com/krABMaga/krABMaga). We happily welcome more frameworks to join the comparison.
 
 **The performance benchmark comparison is run automatically during continuous integration, and hence the comparison is updated after every pull request to this repo.**
 
@@ -12,17 +12,23 @@ This repository has been initiated and maintained by the developers of Agents.jl
 
 These are the results of the latest comparison:
 
-| Model/Framework  | Agents.jl 6.2.10 | Ark.jl 0.4.0 | MASON 22.0 | Netlogo 6.4.0 | Mesa 3.2.0 |
-|:------------------:|:------------------:|:--------------:|:------------:|:---------------:|:------------:|
-| WolfSheep-small (Time-Ratio)  |       1.0        |     **0.34**     |    5.29    |     9.94      |    9.38    |
-| WolfSheep-large (Time-Ratio)  |       1.0        |     **0.14**     |    7.8     |     4.81      |    3.28    |
+| Model/Framework  | Agents.jl 6.2.10 | Ark.jl 0.4.0 | MASON 22.0 | Netlogo 6.4.0 | Mesa 3.2.0 | Mesa-Frames | KrABMaga 0.6.1 |
+|:------------------:|:------------------:|:--------------:|:------------:|:---------------:|:------------:|:------------:|:---------------:|
+| WolfSheep-small (Time-Ratio)  |       1.0        |     **0.34**     |    5.29    |     9.94      |    9.38    |      .       |       .         |
+| WolfSheep-large (Time-Ratio)  |       1.0        |     **0.14**     |    7.8     |     4.81      |    3.28    |      .       |       .         |
 | WolfSheep (Lines of Code) |     **73**          |   149 | 202        |  137 (871)        | 118 |
-|  Flocking-small (Time-Ratio)  |       1.0        |      **0.73**       |    1.42    |     15.37     |   159.29   |
-|  Flocking-large (Time-Ratio)  |       1.0        |     **0.36**     |    0.61    |     19.14     |    59.5    |
+|  Flocking-small (Time-Ratio)  |       1.0        |      **0.73**       |    1.42    |     15.37     |   159.29   |      .       |       .         |
+|  Flocking-large (Time-Ratio)  |       1.0        |     **0.36**     |    0.61    |     19.14     |    59.5    |      .       |       .         |
 |   Flocking (Lines of Code)       |       **42**     |   137  | 159     |    82 (689)   |   94       |
-| Schelling-small (Time-Ratio)  |       1.0        |     **0.61**     |    1.19     |     11.39      |    29.73    |
-| Schelling-large (Time-Ratio)  |       1.0        |     **0.59**     |    1.51    |     14.33     |   26.66    |
+| Schelling-small (Time-Ratio)  |       1.0        |     **0.61**     |    1.19     |     11.39      |    29.73    |      .       |       .         |
+| Schelling-large (Time-Ratio)  |       1.0        |     **0.59**     |    1.51    |     14.33     |   26.66    |      .       |       .         |
 |    Schelling (Lines of Code)      |       **26**          | 78 |    129   |   54 (739)      |     33    |
+
+### Notes on new integrations
+
+- `Mesa-Frames` implementations are vectorized where possible, but still constrained by each model declaration (e.g. random sequential activation in Flocking and Schelling).
+- `KrABMaga` Flocking follows the declared rule structure, but the framework's continuous-space `Real2D` type is `f32` in `krabmaga 0.6.1`, so strict 64-bit position/velocity semantics are not available in that backend.
+- `KrABMaga` seed CLI arguments are parsed for consistency across scripts; however, not all simulation entrypoints in this version of the framework expose explicit seed wiring in the same way.
 
 ## How it works
 
@@ -44,7 +50,7 @@ The requirements to run the benchmark file are:
 
 1. To run the file on a bash shell;
 1. To install the tested frameworks (except for Mason which is already provided);
-1. To make the commands `julia`, `python`, `java` and `javac` available from the shell and to have the bc tool available;
+1. To make the commands `julia`, `python`, `java`, `javac`, `cargo` and `rustc` available from the shell and to have the bc tool available;
 1. To move the folder where NetLogo is installed, rename it as `netlogo` and put it inside the main folder.
 
 This snippet was tested on an Ubuntu 22.04 LTS x86_64, but it should work also on other similar environments, copy-paste it on a bash shell to set up everything automatically for the benchmark:

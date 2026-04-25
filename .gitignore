@@ -6,3 +6,5 @@ Manifest.toml
 netlogo
 benchmark_results.txt
 __pycache__
+**/KrABMaga/target
+**/KrABMaga/Cargo.lock

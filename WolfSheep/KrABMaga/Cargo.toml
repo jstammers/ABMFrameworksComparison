@@ -1,0 +1,8 @@
+[package]
+name = "krabmaga-wolfsheep-benchmark"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+krabmaga = "0.6.1"
+hashbrown = "0.16"
