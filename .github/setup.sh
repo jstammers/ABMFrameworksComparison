@@ -75,8 +75,9 @@ if [[ -n "${GITHUB_PATH:-}" ]]; then
   echo "$JULIA_BIN" >> "$GITHUB_PATH"
 fi
 
-# install agents
-julia --project=@. -e 'using Pkg; Pkg.instantiate()'
+# instantiate and precompile Julia deps early so CI fails fast
+julia --project=@. -e 'using Pkg; Pkg.instantiate(); Pkg.precompile(strict=true)'
+julia --project=@. -e 'using Agents, Ark, BenchmarkTools, PrettyTables, StaticArrays'
 
 # install python deps in isolated venv
 python3 -m venv .venv
